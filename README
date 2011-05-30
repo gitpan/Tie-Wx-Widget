@@ -5,21 +5,21 @@ Tie::Wx::Widget - a simpler way to get and set the Value of a Widget
 
 VERSION
 
-0.01
+0.2
 
 USAGE
 
-    use Tie::Wx::Widget;
+	use Tie::Wx::Widget;
 
-    tie $tiedwidget, Tie::Wx::Widget, $widgetref;
+	tie $tiedwidget, Tie::Wx::Widget, $widgetref;
     
-    # instead of say $widgetref->GetValue;
-    say  $tiedwidget;
+	# instead of say $widgetref->GetValue;
+	say  $tiedwidget;
 
-    # instead of $widgetref->SetValue('7');
+	# instead of $widgetref->SetValue('7');
 	$tiedwidget = 7;
 
-    untie $tiedwidget;
+	untie $tiedwidget;
 
 INSTALLATION
 

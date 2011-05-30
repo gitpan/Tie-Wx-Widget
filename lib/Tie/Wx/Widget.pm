@@ -9,15 +9,15 @@ our @ISA = qw(Tie::Scalar);
 
 =head1 NAME
 
-Tie::Wx::Widget - a simpler way to get and set the Value of a Widget
+Tie::Wx::Widget - a simpler way to get and set the main Value of a Widget
 
 =head1 VERSION
 
-Version 0.01
+Version 0.2
 
 =cut
 
-our $VERSION = '0.01__1';
+our $VERSION = '0.2';
 
 
 =head1 SYNOPSIS
@@ -32,9 +32,7 @@ our $VERSION = '0.01__1';
 	# instead of $widgetref->SetValue('7');
 	$tiedwidget = 7;
 
-    untie $tiedwidget;
-
-=head1 RATIONALE
+	untie $tiedwidget;
 
 =cut
 
@@ -43,6 +41,8 @@ sub TIESCALAR {
 	my $wx = shift;
 	die "$wx is no Wx widget"
 		   unless substr(ref $wx, 0, 4) eq 'Wx::';
+	die "$wx has no set method" unless $wx->can('SetValue');
+	die "$wx has no get method" unless $wx->can('GetValue');
 	return bless { 'w' => $wx, }, $class;
 }
 

@@ -5,3 +5,7 @@ Revision history for Tie-Wx-Widget
         
 0.01__2 added META.yml and fixed spacing in doc
 
+0.2     check if a wx widget ref can GetValue and SetValue
+        add Wx as dependency
+        reworked META.yml
+
