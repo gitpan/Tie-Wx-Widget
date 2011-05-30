@@ -22,14 +22,14 @@ our $VERSION = '0.01__1';
 
 =head1 SYNOPSIS
 
-    use Tie::Wx::Widget;
+	use Tie::Wx::Widget;
 
-    tie $tiedwidget, Tie::Wx::Widget, $widgetref;
+	tie $tiedwidget, Tie::Wx::Widget, $widgetref;
     
-    # instead of say $widgetref->GetValue;
-    say  $tiedwidget;
+	# instead of say $widgetref->GetValue;
+	say  $tiedwidget;
 
-    # instead of $widgetref->SetValue('7');
+	# instead of $widgetref->SetValue('7');
 	$tiedwidget = 7;
 
     untie $tiedwidget;
@@ -94,6 +94,7 @@ L<http://search.cpan.org/dist/Tie-Wx-Widget/>
 
 =head1 ACKNOWLEDGEMENTS
 
+This was solely my idea. 
 
 =head1 LICENSE AND COPYRIGHT
 
