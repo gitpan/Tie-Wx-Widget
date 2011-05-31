@@ -2,10 +2,17 @@ Revision history for Tie-Wx-Widget
 
 0.01__1 29. May 2011
         initial draft, started as idea during Linuxtag Berlin 2 weeks ago
+        run Module::Starter
         
 0.01__2 added META.yml and fixed spacing in doc
 
-0.2     check if a wx widget ref can GetValue and SetValue
+0.2     30. May
+		check if a wx widget ref can GetValue and SetValue
         add Wx as dependency
         reworked META.yml
 
+0.5     31.May
+		check if a wx widget is a widget (inherits from Wx::Window)
+		better error message in case it can't tie
+		use base instead @ISA (parent is still too fresh)
+		real tests! , wrote t/01-run.t and deleted boilerpate.t

@@ -1,17 +1,21 @@
 ---
 # http://module-build.sourceforge.net/META-spec.html
 name:         Tie-Wx-Widget
-version:      0.2
+version:      0.3
 version_from: Tie::Wx::Widget.pm
-abstract:     a simpler way to get and set the Value of a Widget
+abstract:     get and set the main Value of a Widget with less syntax
 installdirs:  site
 distribution_type: module
 author:       Herbert Breunung <lichtkind@cpan.org>
 license:      perl
 build_requires:
   Wx: 0
-  ExtUtils::MakeMaker: 6.42
+  Tie::Scalar: 0
   Test::More: 0.47
+  Test::Exception: 0
+  Test::CheckManifest: 0.9
+  Test::Pod: 1.22
+  ExtUtils::MakeMaker: 6.42
 configure_requires:
   ExtUtils::MakeMaker: 6.42
 generated_by: ''
@@ -25,6 +29,7 @@ requires:
   Wx: 0
 resources:
   bugtracker: http://rt.cpan.org/Public/Dist/Display.html?Name=Tie-Wx-Widget
+  repository: https://bitbucket.org/lichtkind/tie-wx-widget
   license: http://www.netvibes.com/privatepage/1#Perl
 meta-spec:
   version: 1.4

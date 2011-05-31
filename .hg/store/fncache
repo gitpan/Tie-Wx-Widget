@@ -1,0 +1,12 @@
+data/Changes.i
+data/MANIFEST.i
+data/META.yml.i
+data/Makefile.PL.i
+data/README.i
+data/ignore.txt.i
+data/lib/Tie/Wx/Widget.pm.i
+data/t/00-load.t.i
+data/t/boilerplate.t.i
+data/t/manifest.t.i
+data/t/pod.t.i
+data/t/01-run.t.i

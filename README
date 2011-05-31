@@ -1,11 +1,11 @@
 Tie-Wx-Widget
 
 
-Tie::Wx::Widget - a simpler way to get and set the Value of a Widget
+Tie::Wx::Widget - get and set the main Value of a Widget with less syntax
 
 VERSION
 
-0.2
+0.5
 
 USAGE
 
@@ -19,7 +19,15 @@ USAGE
 	# instead of $widgetref->SetValue('7');
 	$tiedwidget = 7;
 
+	# not required:
 	untie $tiedwidget;
+	# now $tiedwidget is just a normal scalar
+
+ATTENTION
+
+Your Program will die, if you don't provide a proper reference to a Wx
+widget, that has a GetValue and SetValue method.
+
 
 INSTALLATION
 
@@ -29,6 +37,20 @@ To install this module, run the following commands:
 	make
 	make test
 	make install
+
+INTERNALS
+
+	# how to get a reference to the Tie::Wx::Widget object?
+	$tieobjectref = tie $tiedwidget, Tie::Wx::Widget, $widgetref;
+	$tieobjectref = tied $tiedwidget;
+
+	# now you even can:
+	$tieobjectref->FETCH()
+	# aka:
+	$tieobjectref->{'widget'}->GetValue;
+	# or do any other method on the wx object reference
+
+	$tieobjectref->DESTROY()
 
 SUPPORT AND DOCUMENTATION
 
@@ -51,6 +73,9 @@ You can also look for information at:
     Search CPAN
         http://search.cpan.org/dist/Tie-Wx-Widget/
 
+	Source Repository:
+
+		http://bitbucket.org/lichtkind/tie-wx-widget
 
 LICENSE AND COPYRIGHT
 
