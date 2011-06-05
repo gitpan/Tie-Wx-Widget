@@ -1,7 +1,6 @@
 ---
 # http://module-build.sourceforge.net/META-spec.html
 name:         Tie-Wx-Widget
-version:      0.3
 version_from: Tie::Wx::Widget.pm
 abstract:     get and set the main Value of a Widget with less syntax
 installdirs:  site
@@ -30,7 +29,7 @@ requires:
 resources:
   bugtracker: http://rt.cpan.org/Public/Dist/Display.html?Name=Tie-Wx-Widget
   repository: https://bitbucket.org/lichtkind/tie-wx-widget
-  license: http://www.netvibes.com/privatepage/1#Perl
+  license: http://www.perlfoundation.org/artistic_license_2_0
 meta-spec:
   version: 1.4
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
