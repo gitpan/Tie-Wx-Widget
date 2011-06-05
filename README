@@ -1,27 +1,23 @@
 Tie-Wx-Widget
 
 
-Tie::Wx::Widget - get and set the main Value of a Widget with less syntax
+Tie::Wx::Widget - get and set the main value of a Widget with less syntax
 
 VERSION
 
-0.6
+0.7
 
 USAGE
 
 	use Tie::Wx::Widget;
 
 	tie $tiedwidget, Tie::Wx::Widget, $widgetref;
-    
-	# instead of say $widgetref->GetValue;
-	say  $tiedwidget;
 
-	# instead of $widgetref->SetValue('7');
-	$tiedwidget = 7;
+	say $tiedwidget;       # instead of say $widgetref->GetValue;
 
-	# not required:
-	untie $tiedwidget;
-	# now $tiedwidget is just a normal scalar
+	$tiedwidget = 7;       # instead of $widgetref->SetValue(7);
+
+	untie $tiedwidget;     # now $tiedwidget is a normal scalar again (not required)
 
 ATTENTION
 

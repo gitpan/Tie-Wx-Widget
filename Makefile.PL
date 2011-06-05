@@ -17,7 +17,7 @@ WriteMakefile(
         'Test::Exception' => 0,
         'Tie::Scalar' => 0,
         'Test::CheckManifest' => 0.9,
-		'Test::Pod' => 1.22,
+        'Test::Pod' => 1.22,
         'Wx' => 0,
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },

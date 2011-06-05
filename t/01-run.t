@@ -8,7 +8,7 @@ our @ISA = 'Wx::App';
 use Wx;
 use Tie::Wx::Widget;
 
-use Test::More tests => 10;
+use Test::More tests => 14;
 use Test::Exception;
 
 sub OnInit {
@@ -19,11 +19,13 @@ sub OnInit {
 	my $t = Wx::TextCtrl->new( $frame, -1, $old_txt,[10,50], [75,30] );
 	my $s = Wx::BoxSizer->new( &Wx::wxVERTICAL );
 
+	# die when input is not correct
 	throws_ok { tie my $tb, $module, '' } qr/is no Wx object/, 'dies when tying an empty value';
 	throws_ok { tie my $tb, $module,  1 } qr/is no Wx object/, 'dies when tying a none ref';
 	throws_ok { tie my $tb, $module, $s } qr/is no Wx widget/, 'dies when tying a wx object thats not a widget';
 	throws_ok { tie my $tb, $module, $b } qr/has no method:/, 'dies when tying widgets without getter or setter';
 
+	# test external API
 	my $tt;
 	is (ref tie( $tt, $module, $t), $module, 'tie works');
 	is (ref tied $tt, $module, 'tied works');
@@ -32,6 +34,14 @@ sub OnInit {
 	is ($tt, $new_txt, 'STORE works');
 	is (untie $tt, 1, 'untie works');
 	is (tied $tt, undef, 'really untied');
+
+	# test internal API
+	my $tref = tie( $tt, $module, $t);
+	is ($tref->FETCH, $new_txt, 'FETCH as a method works');
+	$tref->STORE($old_txt);
+	is ($tt, $old_txt, 'STORE as a method works');
+	is ($tref->{'widget'}, $t, 'get the internal Wx widget object');
+	lives_ok { $tref->DESTROY } 'DESTROY can be called'; # but has no effect
 
 	# shut the app down after 10 millseconds
 	Wx::Timer->new( $frame, 1000 )->Start( '10', 1 );

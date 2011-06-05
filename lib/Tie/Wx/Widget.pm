@@ -4,7 +4,7 @@ use warnings;
 use Tie::Scalar;
 
 package Tie::Wx::Widget;
-our $VERSION = '0.6';
+our $VERSION = '0.7';
 our @ISA = 'Tie::Scalar';
 
 sub TIESCALAR {
@@ -19,6 +19,7 @@ sub TIESCALAR {
 
 sub FETCH { $_[0]->{'widget'}->GetValue }
 sub STORE { $_[0]->{'widget'}->SetValue($_[1]) unless ref $_[1] }
+sub DESTROY {} # to prefent craches if called
 
 'one';
 
@@ -33,16 +34,12 @@ Tie::Wx::Widget - get and set the main Value of a Widget with less syntax
 	use Tie::Wx::Widget;
 
 	tie $tiedwidget, Tie::Wx::Widget, $widgetref;
-    
-	# instead of say $widgetref->GetValue;
-	say $tiedwidget;
 
-	# instead of $widgetref->SetValue('7');
-	$tiedwidget = 7;
+	say $tiedwidget;       # instead of say $widgetref->GetValue;
 
-	# not required:
-	untie $tiedwidget;
-	# now $tiedwidget is just a normal scalar
+	$tiedwidget = 7;       # instead of $widgetref->SetValue(7);
+
+	untie $tiedwidget;     # now $tiedwidget is a normal scalar again (not required)
 
 =head1 ATTENTION
 
@@ -51,7 +48,7 @@ widget, that has a GetValue and SetValue method.
 
 =head1 INTERNALS
 
-	# how to get a reference to the Tie::Wx::Widget object?
+	# how to get a reference to the Tie::Wx::Widget object ?
 	$tieobjectref = tie $tiedwidget, Tie::Wx::Widget, $widgetref;
 	$tieobjectref = tied $tiedwidget;
 
@@ -60,12 +57,10 @@ widget, that has a GetValue and SetValue method.
 	# aka:
 	$tieobjectref->{'widget'}->GetValue;
 	# or do any other method on the wx object
+	$tieobjectref->STORE(7);
 
+	# doesn't do anything
 	$tieobjectref->DESTROY()
-
-=head1 AUTHOR
-
-Herbert Breunung, C<< <lichtkind at cpan.org> >>
 
 =head1 BUGS
 
@@ -110,6 +105,10 @@ L<http://bitbucket.org/lichtkind/tie-wx-widget>
 =head1 ACKNOWLEDGEMENTS
 
 This was solely my idea. 
+
+=head1 AUTHOR
+
+Herbert Breunung, C<< <lichtkind at cpan.org> >>
 
 =head1 LICENSE AND COPYRIGHT
 

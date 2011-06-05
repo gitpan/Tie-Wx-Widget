@@ -1,4 +1,5 @@
 Changes
+dist.ini
 ignore.txt
 lib/Tie/Wx/Widget.pm
 Makefile.PL

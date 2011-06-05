@@ -1,5 +1,10 @@
 Revision history for Tie-Wx-Widget
 
+0.7		5.july
+		$tref->DESTROY doesn't crash anymore
+		tests for internal access
+		refined docs
+
 0.6		5.july
 		made code a bit clearer (and longer) named key 'w' => 'widget'
 		inherit with @ISA (faster) not base
