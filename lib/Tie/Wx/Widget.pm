@@ -4,7 +4,7 @@ use warnings;
 use Tie::Scalar;
 
 package Tie::Wx::Widget;
-our $VERSION = '0.7';
+our $VERSION = '0.8';
 our @ISA = 'Tie::Scalar';
 
 sub TIESCALAR {
@@ -14,12 +14,12 @@ sub TIESCALAR {
 	die "$widget is no Wx widget"         unless $widget->isa('Wx::Control');
 	die "$widget has no method: GetValue" unless $widget->can('GetValue');
 	die "$widget has no method: SetValue" unless $widget->can('SetValue');
-	return bless { 'widget' => $widget }, $self;
+	return bless { 'w' => $widget, 'widget' => $widget }, $self;
 }
 
-sub FETCH { $_[0]->{'widget'}->GetValue }
-sub STORE { $_[0]->{'widget'}->SetValue($_[1]) unless ref $_[1] }
-sub DESTROY {} # to prefent craches if called
+sub FETCH { $_[0]->{'w'}->GetValue }
+sub STORE { $_[0]->{'w'}->SetValue($_[1]) unless ref $_[1] }
+sub DESTROY {} # to prevent crashes if called
 
 'one';
 
@@ -27,13 +27,13 @@ __END__
 
 =head1 NAME
 
-Tie::Wx::Widget - get and set the main Value of a Widget with less syntax
+Tie::Wx::Widget - get and set the main value of a Widget with less syntax
 
 =head1 SYNOPSIS
 
 	use Tie::Wx::Widget;
 
-	tie $tiedwidget, Tie::Wx::Widget, $widgetref;
+	tie $tiedwidget, Tie::Wx::Widget, $widget;
 
 	say $tiedwidget;       # instead of say $widgetref->GetValue;
 
@@ -43,24 +43,26 @@ Tie::Wx::Widget - get and set the main Value of a Widget with less syntax
 
 =head1 ATTENTION
 
-Your Program will die, if you don't provide a proper reference to a Wx
-widget, that has a GetValue and SetValue method.
+Your program will die, if you don't provide a proper reference
+to a Wx widget, that has a GetValue and SetValue method.
 
 =head1 INTERNALS
 
 	# how to get a reference to the Tie::Wx::Widget object ?
-	$tieobjectref = tie $tiedwidget, Tie::Wx::Widget, $widgetref;
-	$tieobjectref = tied $tiedwidget;
+	$tieobject = tie $tiedwidget, Tie::Wx::Widget, $widget;
+	$tieobject = tied $tiedwidget;
 
 	# now you even can:
-	$tieobjectref->FETCH()
+	$tieobject->FETCH()
 	# aka:
-	$tieobjectref->{'widget'}->GetValue;
+	$tieobject->{'widget'}->GetValue;
 	# or do any other method on the wx object
-	$tieobjectref->STORE(7);
+	$tieobject->{'w'}->Show(0);
+	# works too (hides the widget)
+	$tieobject->STORE(7);
 
 	# doesn't do anything
-	$tieobjectref->DESTROY()
+	$tieobject->DESTROY()
 
 =head1 BUGS
 

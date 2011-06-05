@@ -5,13 +5,13 @@ Tie::Wx::Widget - get and set the main value of a Widget with less syntax
 
 VERSION
 
-0.7
+0.8
 
 USAGE
 
 	use Tie::Wx::Widget;
 
-	tie $tiedwidget, Tie::Wx::Widget, $widgetref;
+	tie $tiedwidget, Tie::Wx::Widget, $widget;
 
 	say $tiedwidget;       # instead of say $widgetref->GetValue;
 
@@ -21,8 +21,8 @@ USAGE
 
 ATTENTION
 
-Your Program will die, if you don't provide a proper reference to a Wx
-widget, that has a GetValue and SetValue method.
+Your program will die, if you don't provide a proper reference
+to a Wx widget, that has a GetValue and SetValue method.
 
 
 INSTALLATION
@@ -36,17 +36,21 @@ To install this module, run the following commands:
 
 INTERNALS
 
-	# how to get a reference to the Tie::Wx::Widget object?
-	$tieobjectref = tie $tiedwidget, Tie::Wx::Widget, $widgetref;
-	$tieobjectref = tied $tiedwidget;
+	# how to get a reference to the Tie::Wx::Widget object ?
+	$tieobject = tie $tiedwidget, Tie::Wx::Widget, $widget;
+	$tieobject = tied $tiedwidget;
 
 	# now you even can:
-	$tieobjectref->FETCH()
+	$tieobject->FETCH()
 	# aka:
-	$tieobjectref->{'widget'}->GetValue;
-	# or do any other method on the wx object reference
+	$tieobject->{'widget'}->GetValue;
+	# or do any other method on the wx object
+	$tieobject->{'w'}->Show(0);
+	# works too  (hides the widget)
+	$tieobject->STORE(7);
 
-	$tieobjectref->DESTROY()
+	# doesn't do anything
+	$tieobject->DESTROY()
 
 SUPPORT AND DOCUMENTATION
 

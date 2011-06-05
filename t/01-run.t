@@ -5,10 +5,11 @@ BEGIN { unshift @INC, -d 't' ? 'lib' : '../lib' } # making local lib favoured
 
 package TestApp;
 our @ISA = 'Wx::App';
+
 use Wx;
 use Tie::Wx::Widget;
 
-use Test::More tests => 14;
+use Test::More tests => 15;
 use Test::Exception;
 
 sub OnInit {
@@ -41,6 +42,7 @@ sub OnInit {
 	$tref->STORE($old_txt);
 	is ($tt, $old_txt, 'STORE as a method works');
 	is ($tref->{'widget'}, $t, 'get the internal Wx widget object');
+	is ($tref->{'w'}, $t, 'alternative shortcut key works too');
 	lives_ok { $tref->DESTROY } 'DESTROY can be called'; # but has no effect
 
 	# shut the app down after 10 millseconds

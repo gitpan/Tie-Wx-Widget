@@ -1,5 +1,10 @@
 Revision history for Tie-Wx-Widget
 
+0.8		
+		alternative shortcutkey for the widgetref ('w')
+		test for that
+		typos in the doc
+
 0.7		5.july
 		$tref->DESTROY doesn't crash anymore
 		tests for internal access
