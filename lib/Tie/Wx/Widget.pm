@@ -4,14 +4,14 @@ use warnings;
 use Tie::Scalar;
 
 package Tie::Wx::Widget;
-our $VERSION = '0.9';
+our $VERSION = '0.91';
 our @ISA = 'Tie::Scalar';
 our $complainmethod = 'die';
 
-sub import   { $complainmethod = 'warn' if defined $_[1] and $_[1] eq 'warn'}
-sub die      { $complainmethod = 'die'}
-sub warn     { $complainmethod = 'warn'}
-sub complain { $complainmethod eq 'die' ? CORE::die $_[0] : CORE::warn $_[0] }
+sub import   { $complainmethod = 'warn_mode' if defined $_[1] and $_[1] eq 'warn'}
+sub die_mode { $complainmethod = 'die'}
+sub warn_mode{ $complainmethod = 'warn'}
+sub complain { $complainmethod eq 'die' ? die $_[0] : warn $_[0] }
 
 sub TIESCALAR {
 	my $self = shift;
@@ -56,16 +56,16 @@ Your program will die, if you don't provide a proper reference
 to a Wx widget, that has a GetValue and SetValue method.
 Unless you init with
 
-	use Tie::Wx::Widget 'warn';
+	use Tie::Wx::Widget 'warn_mode';
 
 	or do later:
 
-	Tie::Wx::Widget::warn();
+	Tie::Wx::Widget::warn_mode();
 
 Then will be called C<warn> instead of C<die>. 
 But you can switch anytime back with:
 
-	Tie::Wx::Widget::die();
+	Tie::Wx::Widget::die_mode();
 
 Wich has only effect for all variables afterwards.
 Because if the Wx ref is not good there will be no tying anyway.

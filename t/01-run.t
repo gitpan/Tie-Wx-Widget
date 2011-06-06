@@ -7,7 +7,7 @@ package TestApp;
 our @ISA = 'Wx::App';
 
 use Wx;
-use Tie::Wx::Widget 'die';
+use Tie::Wx::Widget 'die_mode';
 
 use Test::More tests => 22;
 use Test::Exception;
@@ -32,11 +32,11 @@ sub OnInit {
 	throws_ok { tie my $tb, $module, $s } qr/is no Wx widget/, $cmsg;
 	dies_ok   { tie my $tb, $module, $b } 'dies when tying widgets without getter or setter';
 	throws_ok { tie my $tb, $module, $b } qr/has no method:/,  $cmsg;
-	Tie::Wx::Widget::warn();
+	Tie::Wx::Widget::warn_mode();
 	my $tbb;
 	warning_like {tie my $tbb, $module, ''} qr/is no Wx object/, 'warn mode works correctly';
 	is (tied $tbb, undef, 'really didn\'t tie in warn mode with bad input');
-	Tie::Wx::Widget::die();
+	Tie::Wx::Widget::die_mode();
 	dies_ok   { tie my $tb, $module, '' } 'die mode works too';
 
 	# test external API

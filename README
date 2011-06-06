@@ -5,7 +5,7 @@ Tie::Wx::Widget - get and set the main value of a Wx widget with less syntax
 
 VERSION
 
-0.9
+0.91
 
 USAGE
 
@@ -25,16 +25,16 @@ Your program will die, if you don't provide a proper reference
 to a Wx widget, that has a GetValue and SetValue method.
 Unless you init with
 
-	use Tie::Wx::Widget 'warn';
+	use Tie::Wx::Widget 'warn_mode';
 
 	or do later:
 
-	Tie::Wx::Widget::warn();
+	Tie::Wx::Widget::warn_mode();
 
 Then will be called warn instead of die. 
 But you can switch anytime back with:
 
-	Tie::Wx::Widget::die();
+	Tie::Wx::Widget::die_mode();
 
 Wich has only effect for all variables afterwards.
 Because if the Wx ref is not good there will be no tying anyway.
