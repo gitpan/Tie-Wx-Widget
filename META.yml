@@ -1,8 +1,8 @@
 ---
 # http://module-build.sourceforge.net/META-spec.html
 name:         Tie-Wx-Widget
-version:      0.8
-abstract:     get and set the main value of a Widget with less syntax
+version:      0.9
+abstract:     get and set the main value of a Wx widget with less syntax
 installdirs:  site
 distribution_type: module
 author:       Herbert Breunung <lichtkind@cpan.org>
@@ -12,6 +12,7 @@ build_requires:
   Tie::Scalar: 0
   Test::More: 0.47
   Test::Exception: 0
+  Test::Warn: 0
   Test::CheckManifest: 0.9
   Test::Pod: 1.22
   ExtUtils::MakeMaker: 6.42

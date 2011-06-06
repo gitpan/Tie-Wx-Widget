@@ -1,7 +1,11 @@
 Revision history for Tie-Wx-Widget
 
-0.8		
-		alternative shortcutkey for the widgetref ('w')
+0.9		6.july
+		added warn mode so program hasn't to die,
+		when not trying to tie a none widget
+
+0.8		5.july
+		alternative shortcut key for the widgetref ('w')
 		test for that
 		typos in the doc
 

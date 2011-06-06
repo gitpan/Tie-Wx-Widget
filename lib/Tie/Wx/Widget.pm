@@ -4,17 +4,26 @@ use warnings;
 use Tie::Scalar;
 
 package Tie::Wx::Widget;
-our $VERSION = '0.8';
+our $VERSION = '0.9';
 our @ISA = 'Tie::Scalar';
+our $complainmethod = 'die';
+
+sub import   { $complainmethod = 'warn' if defined $_[1] and $_[1] eq 'warn'}
+sub die      { $complainmethod = 'die'}
+sub warn     { $complainmethod = 'warn'}
+sub complain { $complainmethod eq 'die' ? CORE::die $_[0] : CORE::warn $_[0] }
 
 sub TIESCALAR {
 	my $self = shift;
 	my $widget = shift;
-	die "$widget is no Wx object"         unless substr(ref $widget, 0, 4) eq 'Wx::';
-	die "$widget is no Wx widget"         unless $widget->isa('Wx::Control');
-	die "$widget has no method: GetValue" unless $widget->can('GetValue');
-	die "$widget has no method: SetValue" unless $widget->can('SetValue');
-	return bless { 'w' => $widget, 'widget' => $widget }, $self;
+	if (substr(ref $widget, 0, 4) ne 'Wx::'){complain("$widget is no Wx object")}
+	elsif(not $widget->isa('Wx::Control'))  {complain("$widget is no Wx widget")}
+	elsif(not $widget->can('GetValue'))     {complain("$widget has no method: GetValue")}
+	elsif(not$widget->can('SetValue'))      {complain("$widget has no method: SetValue")}
+	else {
+		return bless { 'w' => $widget, 'widget' => $widget }, $self;
+	}
+	return 0;
 }
 
 sub FETCH { $_[0]->{'w'}->GetValue }
@@ -27,7 +36,7 @@ __END__
 
 =head1 NAME
 
-Tie::Wx::Widget - get and set the main value of a Widget with less syntax
+Tie::Wx::Widget - get and set the main value of a Wx widget with less syntax
 
 =head1 SYNOPSIS
 
@@ -45,6 +54,21 @@ Tie::Wx::Widget - get and set the main value of a Widget with less syntax
 
 Your program will die, if you don't provide a proper reference
 to a Wx widget, that has a GetValue and SetValue method.
+Unless you init with
+
+	use Tie::Wx::Widget 'warn';
+
+	or do later:
+
+	Tie::Wx::Widget::warn();
+
+Then will be called C<warn> instead of C<die>. 
+But you can switch anytime back with:
+
+	Tie::Wx::Widget::die();
+
+Wich has only effect for all variables afterwards.
+Because if the Wx ref is not good there will be no tying anyway.
 
 =head1 INTERNALS
 
