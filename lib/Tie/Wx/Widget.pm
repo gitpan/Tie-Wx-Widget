@@ -4,7 +4,7 @@ use warnings;
 use Tie::Scalar;
 
 package Tie::Wx::Widget;
-our $VERSION = '0.91';
+our $VERSION = '0.95';
 our @ISA = 'Tie::Scalar';
 our $complainmethod = 'die';
 
@@ -14,20 +14,33 @@ sub warn_mode{ $complainmethod = 'warn'}
 sub complain { $complainmethod eq 'die' ? die $_[0] : warn $_[0] }
 
 sub TIESCALAR {
-	my $self = shift;
-	my $widget = shift;
-	if (substr(ref $widget, 0, 4) ne 'Wx::'){complain("$widget is no Wx object")}
-	elsif(not $widget->isa('Wx::Control'))  {complain("$widget is no Wx widget")}
-	elsif(not $widget->can('GetValue'))     {complain("$widget has no method: GetValue")}
-	elsif(not$widget->can('SetValue'))      {complain("$widget has no method: SetValue")}
+	my ($self, $widget, $store, $fetch) = @_;
+
+	if (substr(ref $widget, 0, 4) ne 'Wx::') {complain("$widget is no Wx object")}
+	elsif (not $widget->isa('Wx::Control'))  {complain("$widget is no Wx widget")}
+	elsif (not $widget->can('GetValue'))     {complain("$widget has no method: GetValue")}
+	elsif (not $widget->can('SetValue'))      {complain("$widget has no method: SetValue")}
+	elsif (defined $store and ref $store ne 'CODE') {complain("no coderef as STORE callback")}
+	elsif (defined $fetch and ref $fetch ne 'CODE') {complain("no coderef as FETCH callback")}
 	else {
-		return bless { 'w' => $widget, 'widget' => $widget }, $self;
+		my %hash = ('w' => $widget, 'widget' => $widget);
+		$hash{'store'} = $store if defined $store;
+		$hash{'fetch'} = $fetch if defined $fetch;
+		return bless \%hash, $self;
 	}
 	return 0;
 }
 
-sub FETCH { $_[0]->{'w'}->GetValue }
-sub STORE { $_[0]->{'w'}->SetValue($_[1]) unless ref $_[1] }
+sub FETCH {
+	my $v = local $_ = $_[0]->{'w'}->GetValue;
+	if (exists $_[0]->{'fetch'}) { &{$_[0]->{'fetch'}}() }
+	return $v;
+}
+sub STORE { 
+	return 0 if ref $_[1];
+	if (exists $_[0]->{'store'}) { local $_ = $_[1]; &{$_[0]->{'store'}}() }
+	return $_[0]->{'w'}->SetValue( $_[1] );
+}
 sub DESTROY {} # to prevent crashes if called
 
 'one';
@@ -44,21 +57,41 @@ Tie::Wx::Widget - get and set the main value of a Wx widget with less syntax
 
 	tie $tiedwidget, Tie::Wx::Widget, $widget;
 
-	say $tiedwidget;       # instead of say $widgetref->GetValue;
-
 	$tiedwidget = 7;       # instead of $widgetref->SetValue(7);
+
+	say $tiedwidget;       # instead of say $widgetref->GetValue;
 
 	untie $tiedwidget;     # now $tiedwidget is a normal scalar again (not required)
 
-=head1 ATTENTION
 
-Your program will die, if you don't provide a proper reference
-to a Wx widget, that has a GetValue and SetValue method.
-Unless you init with
+=head1 CALLBACKS
+
+Often are the widget values couples with each other. For instance in
+L<App::Spirograph> is a slider which max value is dependent on the value
+of another slider. Once you know this, why keep track of it and change
+the range by hand any given time?
+
+	tie $tslider, 
+		Tie::Wx::Widget, 
+		$slider, 
+		sub { $subslider->SetRange(1, $_) };
+
+C<$_> holds the assigned value.
+
+The complete API is:
+
+	tie $tiedwidget, Tie::Wx::Widget, $widget, &$do_when_assign, &$do_when_retrieve;
+
+
+=head1 WARNINGS
+
+Your program will C<die>, if you don't provide a proper Wx widget,
+that has a GetValue and SetValue method, or the callbacks are no proper
+coderef. Unless you init with:
 
 	use Tie::Wx::Widget 'warn_mode';
 
-	or do later:
+or do later:
 
 	Tie::Wx::Widget::warn_mode();
 
@@ -67,8 +100,9 @@ But you can switch anytime back with:
 
 	Tie::Wx::Widget::die_mode();
 
-Wich has only effect for all variables afterwards.
-Because if the Wx ref is not good there will be no tying anyway.
+Wich has only effect for all variables tied afterwards.
+Because if the Wx ref is not good, there will be no tying anyway.
+
 
 =head1 INTERNALS
 

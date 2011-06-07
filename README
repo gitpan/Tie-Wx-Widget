@@ -1,11 +1,5 @@
-Tie-Wx-Widget
-
-
-Tie::Wx::Widget - get and set the main value of a Wx widget with less syntax
-
-VERSION
-
-0.91
+Name
+	Tie::Wx::Widget - get/set main value of a Wx widget with less syntax and more magic
 
 USAGE
 
@@ -13,21 +7,40 @@ USAGE
 
 	tie $tiedwidget, Tie::Wx::Widget, $widget;
 
-	say $tiedwidget;       # instead of say $widgetref->GetValue;
-
 	$tiedwidget = 7;       # instead of $widgetref->SetValue(7);
+
+	say $tiedwidget;       # instead of say $widgetref->GetValue;
 
 	untie $tiedwidget;     # now $tiedwidget is a normal scalar again (not required)
 
-ATTENTION
 
-Your program will die, if you don't provide a proper reference
-to a Wx widget, that has a GetValue and SetValue method.
-Unless you init with
+CALLBACKS
+
+Often are the widget values couples with each other. For instance in
+App::Spirograph is a slider which max value is dependent on the value
+of another slider. Once you know this, why keep track of it and change
+the range of the second slider by hand any given time?
+
+	tie $tslider, 
+		Tie::Wx::Widget, 
+		$slider, 
+		sub { $subslider->SetRange(1,$_) };
+
+$_ holds the assigned value.
+
+The complete API is:
+
+	tie $tiedwidget, Tie::Wx::Widget, $widget, &$do_when_assign, &$do_when_retrieve;
+
+
+WARNINGS
+
+Your program will die, if you don't provide a proper Wx widget,
+that has a GetValue and SetValue method. Unless you init with:
 
 	use Tie::Wx::Widget 'warn_mode';
 
-	or do later:
+or do later:
 
 	Tie::Wx::Widget::warn_mode();
 
@@ -39,15 +52,6 @@ But you can switch anytime back with:
 Wich has only effect for all variables afterwards.
 Because if the Wx ref is not good there will be no tying anyway.
 
-
-INSTALLATION
-
-To install this module, run the following commands:
-
-	perl Makefile.PL
-	make
-	make test
-	make install
 
 INTERNALS
 
@@ -66,6 +70,16 @@ INTERNALS
 
 	# doesn't do anything
 	$tieobject->DESTROY()
+
+
+INSTALLATION
+
+To install this module, run the following commands:
+
+	perl Makefile.PL
+	make
+	make test
+	make install
 
 SUPPORT AND DOCUMENTATION
 
