@@ -1,14 +1,14 @@
 ---
 # http://module-build.sourceforge.net/META-spec.html
 name:         Tie-Wx-Widget
-version:      0.95
+version:      0.96
 abstract:     get/set main value of a Wx widget with less syntax and more magic
 installdirs:  site
 distribution_type: module
 author:       Herbert Breunung <lichtkind@cpan.org>
 license:      perl
 build_requires:
-  Wx: 0
+  Wx: 0.74
   Tie::Scalar: 0
   Test::More: 0.47
   Test::Exception: 0

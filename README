@@ -1,5 +1,5 @@
 Name
-	Tie::Wx::Widget - get/set main value of a Wx widget with less syntax and more magic
+	Tie::Wx::Widget - get&set main value of a Wx widget with less syntax and more magic
 
 USAGE
 
@@ -21,22 +21,20 @@ App::Spirograph is a slider which max value is dependent on the value
 of another slider. Once you know this, why keep track of it and change
 the range of the second slider by hand any given time?
 
-	tie $tslider, 
-		Tie::Wx::Widget, 
-		$slider, 
-		sub { $subslider->SetRange(1,$_) };
+	tie $tslider, Tie::Wx::Widget, $slider, sub { $subslider->SetRange(1, $_) };
 
 $_ holds the assigned value.
 
-The complete API is:
+The complete parameter list is is:
 
-	tie $tiedwidget, Tie::Wx::Widget, $widget, &$do_when_assign, &$do_when_retrieve;
+	tie $tw, Tie::Wx::Widget, $widget, [&$do_when_assign, &$do_when_retrieve];
 
 
 WARNINGS
 
-Your program will die, if you don't provide a proper Wx widget,
-that has a GetValue and SetValue method. Unless you init with:
+Your program will C<die>, if you don't provide a proper Wx widget,
+that has a GetValue and SetValue method, or the callbacks are no coderef.
+Unless you init with:
 
 	use Tie::Wx::Widget 'warn_mode';
 
@@ -44,13 +42,13 @@ or do later:
 
 	Tie::Wx::Widget::warn_mode();
 
-Then will be called warn instead of die. 
+Then will be called C<warn> instead of C<die>. 
 But you can switch anytime back with:
 
 	Tie::Wx::Widget::die_mode();
 
-Wich has only effect for all variables afterwards.
-Because if the Wx ref is not good there will be no tying anyway.
+Wich has only effect for all variables tied afterwards.
+Because if the Wx ref is not good, there will be no tying anyway.
 
 
 INTERNALS

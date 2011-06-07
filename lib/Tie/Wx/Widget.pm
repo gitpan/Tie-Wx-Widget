@@ -4,7 +4,7 @@ use warnings;
 use Tie::Scalar;
 
 package Tie::Wx::Widget;
-our $VERSION = '0.95';
+our $VERSION = '0.96';
 our @ISA = 'Tie::Scalar';
 our $complainmethod = 'die';
 
@@ -30,16 +30,16 @@ sub TIESCALAR {
 	}
 	return 0;
 }
-
 sub FETCH {
-	my $v = local $_ = $_[0]->{'w'}->GetValue;
-	if (exists $_[0]->{'fetch'}) { &{$_[0]->{'fetch'}}() }
-	return $v;
+	my $r = $_[0]->{'w'}->GetValue;
+	if (exists $_[0]->{'fetch'}) { local $_ = $r; &{$_[0]->{'fetch'}}() }
+	return $r;
 }
 sub STORE { 
 	return 0 if ref $_[1];
+	my $r = $_[0]->{'w'}->SetValue( $_[1] );
 	if (exists $_[0]->{'store'}) { local $_ = $_[1]; &{$_[0]->{'store'}}() }
-	return $_[0]->{'w'}->SetValue( $_[1] );
+	return $r;
 }
 sub DESTROY {} # to prevent crashes if called
 
@@ -49,7 +49,7 @@ __END__
 
 =head1 NAME
 
-Tie::Wx::Widget - get and set the main value of a Wx widget with less syntax
+Tie::Wx::Widget - get&set main value of a Wx widget with less syntax and more magic
 
 =head1 SYNOPSIS
 
@@ -71,23 +71,20 @@ L<App::Spirograph> is a slider which max value is dependent on the value
 of another slider. Once you know this, why keep track of it and change
 the range by hand any given time?
 
-	tie $tslider, 
-		Tie::Wx::Widget, 
-		$slider, 
-		sub { $subslider->SetRange(1, $_) };
+	tie $tslider, Tie::Wx::Widget, $slider, sub { $subslider->SetRange(1, $_) };
 
 C<$_> holds the assigned value.
 
-The complete API is:
+The complete parameter list is is:
 
-	tie $tiedwidget, Tie::Wx::Widget, $widget, &$do_when_assign, &$do_when_retrieve;
+	tie $tw, Tie::Wx::Widget, $widget, [&$do_when_assign, &$do_when_retrieve];
 
 
 =head1 WARNINGS
 
 Your program will C<die>, if you don't provide a proper Wx widget,
-that has a GetValue and SetValue method, or the callbacks are no proper
-coderef. Unless you init with:
+that has a GetValue and SetValue method, or the callbacks are no coderef.
+Unless you init with:
 
 	use Tie::Wx::Widget 'warn_mode';
 
@@ -164,7 +161,7 @@ L<http://bitbucket.org/lichtkind/tie-wx-widget>
 
 =head1 ACKNOWLEDGEMENTS
 
-This was solely my idea. 
+This was solely my idea during Linuxtag 2011. Started as a slide there.
 
 =head1 AUTHOR
 
