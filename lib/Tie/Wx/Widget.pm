@@ -4,7 +4,7 @@ use warnings;
 use Tie::Scalar;
 
 package Tie::Wx::Widget;
-our $VERSION = '0.96';
+our $VERSION = '0.97';
 our @ISA = 'Tie::Scalar';
 our $complainmethod = 'die';
 
