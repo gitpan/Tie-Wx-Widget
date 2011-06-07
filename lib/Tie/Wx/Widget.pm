@@ -4,7 +4,7 @@ use warnings;
 use Tie::Scalar;
 
 package Tie::Wx::Widget;
-our $VERSION = '0.97';
+our $VERSION = '0.98';
 our @ISA = 'Tie::Scalar';
 our $complainmethod = 'die';
 
@@ -49,7 +49,7 @@ __END__
 
 =head1 NAME
 
-Tie::Wx::Widget - get&set main value of a Wx widget with less syntax and more magic
+Tie::Wx::Widget - get and set main value of a Wx widget with less syntax and more magic
 
 =head1 SYNOPSIS
 
