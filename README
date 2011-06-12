@@ -1,34 +1,41 @@
 Name
-	Tie::Wx::Widget - get&set main value of a Wx widget with less syntax and more magic
+    Tie::Wx::Widget - get&set main value of a Wx widget with less syntax and more magic
 
 USAGE
 
-	use Tie::Wx::Widget;
+    use Tie::Wx::Widget;
 
-	tie $tiedwidget, Tie::Wx::Widget, $widget;
+    tie $tiedwidget, Tie::Wx::Widget, $widget;
 
-	$tiedwidget = 7;       # instead of $widgetref->SetValue(7);
+    $tiedwidget = 7;       # instead of $widgetref->SetValue(7);
 
-	say $tiedwidget;       # instead of say $widgetref->GetValue;
+    say $tiedwidget;       # instead of say $widgetref->GetValue;
 
-	untie $tiedwidget;     # now $tiedwidget is a normal scalar again (not required)
+    untie $tiedwidget;     # now $tiedwidget is a normal scalar again (not required)
 
 
 CALLBACKS
 
-Often are the widget values couples with each other. For instance in
+Often are the widget values coupled with each other. For instance in
 App::Spirograph is a slider which max value is dependent on the value
 of another slider. Once you know this, why keep track of it and change
 the range of the second slider by hand any given time?
 
-	tie $tslider, Tie::Wx::Widget, $slider, sub { $subslider->SetRange(1, $_) };
+    tie $tslider, Tie::Wx::Widget, $slider, 
+        sub { $[0]->SetValue($[1]); $subslider->SetRange(1, $[1]) };
 
-$_ holds the assigned value.
+The first parameter to the callback is always the Wx object reference,
+the assign callback gets also a second with the assigned value.
+Own callbacks replace the the ones set by default.
 
 The complete parameter list is is:
 
-	tie $tw, Tie::Wx::Widget, $widget, [&$do_when_assign, &$do_when_retrieve];
+    tie $tw, Tie::Wx::Widget, $widget, [&$do_when_assign, &$do_when_retrieve];
 
+Yes, its also doable with events, but thats also more syntax than this.
+Plus, its different Event for many widgets, why remember this?
+Plus, a tied widget still gives you the freedom to change the value
+under the radar. See section INTERNALS for more.
 
 WARNINGS
 
@@ -36,16 +43,16 @@ Your program will C<die>, if you don't provide a proper Wx widget,
 that has a GetValue and SetValue method, or the callbacks are no coderef.
 Unless you init with:
 
-	use Tie::Wx::Widget 'warn_mode';
+    use Tie::Wx::Widget 'warn_mode';
 
 or do later:
 
-	Tie::Wx::Widget::warn_mode();
+    Tie::Wx::Widget::warn_mode();
 
 Then will be called C<warn> instead of C<die>. 
 But you can switch anytime back with:
 
-	Tie::Wx::Widget::die_mode();
+    Tie::Wx::Widget::die_mode();
 
 Wich has only effect for all variables tied afterwards.
 Because if the Wx ref is not good, there will be no tying anyway.
@@ -53,31 +60,31 @@ Because if the Wx ref is not good, there will be no tying anyway.
 
 INTERNALS
 
-	# how to get a reference to the Tie::Wx::Widget object ?
-	$tieobject = tie $tiedwidget, Tie::Wx::Widget, $widget;
-	$tieobject = tied $tiedwidget;
+    # how to get a reference to the Tie::Wx::Widget object ?
+    $tieobject = tie $tiedwidget, Tie::Wx::Widget, $widget;
+    $tieobject = tied $tiedwidget;
 
-	# now you even can:
-	$tieobject->FETCH()
-	# aka:
-	$tieobject->{'widget'}->GetValue;
-	# or do any other method on the wx object
-	$tieobject->{'w'}->Show(0);
-	# works too  (hides the widget)
-	$tieobject->STORE(7);
+    # now you even can:
+    $tieobject->FETCH()
+    # aka:
+    $tieobject->{'widget'}->GetValue;
+    # or do any other method on the wx object
+    $tieobject->{'w'}->Show(0);
+    # works too  (hides the widget)
+    $tieobject->STORE(7);
 
-	# doesn't do anything
-	$tieobject->DESTROY()
+    # doesn't do anything
+    $tieobject->DESTROY()
 
 
 INSTALLATION
 
 To install this module, run the following commands:
 
-	perl Makefile.PL
-	make
-	make test
-	make install
+    perl Makefile.PL
+    make
+    make test
+    make install
 
 SUPPORT AND DOCUMENTATION
 
@@ -100,9 +107,9 @@ You can also look for information at:
     Search CPAN
         http://search.cpan.org/dist/Tie-Wx-Widget/
 
-	Source Repository:
+    Source Repository:
 
-		http://bitbucket.org/lichtkind/tie-wx-widget
+        http://bitbucket.org/lichtkind/tie-wx-widget
 
 LICENSE AND COPYRIGHT
 

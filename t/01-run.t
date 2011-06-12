@@ -6,7 +6,7 @@ BEGIN { unshift @INC, -d 't' ? 'lib' : '../lib' } # making local lib favoured
 package TestApp;
 our @ISA = 'Wx::App';
 
-use Test::More tests => 31;
+use Test::More tests => 33;
 use Test::Exception;
 use Test::Warn;
 
@@ -61,17 +61,23 @@ sub OnInit {
 
 	# callbacks
 	my $tslider;
-	my $tied = tie $tslider, $module, $s1, sub { $s2->SetRange(1, $_) }, sub { $s2->SetValue($_) };
+	my $tied = tie $tslider, $module, $s1,
+				sub { $_[0]->SetValue($_[1]); $s2->SetRange(1, $_[1]) },
+				sub { $s2->SetValue( $_[0]->GetValue ) };
 	my $dummy = $tslider;
 	is ($s2->GetValue, $old_nr, 'FETCH callback worked');
 	$tslider = $new_nr;
 	is ($s2->GetMax, $new_nr, 'STORE callback worked');
 
 	# internal API
+	$t->SetValue($old_txt);
+	my $tref = tie( $tt, $module, $t);
+	is ($tref->FETCH, $old_txt, 'FETCH as a method works');
+	$tref->STORE($new_txt);
+	is ($tt, $new_txt, 'STORE as a method works');
 	my $tref = tie( $tt, $module, $t, sub {$new_txt}, sub {$old_txt});
-	is ($tref->FETCH, $new_txt, 'FETCH as a method works');
-	$tref->STORE($old_txt);
-	is ($tt, $old_txt, 'STORE as a method works');
+	is ($tref->FETCH, $old_txt, 'FETCH callback as a method works');
+	is ($tref->STORE, $new_txt, 'STORE callback as a method works');
 	is ($tref->{'widget'}, $t, 'get the internal Wx widget object');
 	is ($tref->{'w'}, $t, 'alternative shortcut key works too');
 	is (&{$tref->{'fetch'}}(), $old_txt, 'get the FETCH callback');
