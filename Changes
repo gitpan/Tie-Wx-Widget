@@ -1,5 +1,10 @@
 Revision history for Tie-Wx-Widget
 
+0.991   17.july
+        accepting als own widget classes inherited from Wx::Control 
+        dummy UNTIE method
+        more exact error messages when attempt to tie all sorts of things
+
 0.99    11.july
         changing internal API, own callback now replace the default ones completely
 

@@ -4,7 +4,7 @@ use warnings;
 use Tie::Scalar;
 
 package Tie::Wx::Widget;
-our $VERSION = '0.99';
+our $VERSION = '0.991';
 our @ISA = 'Tie::Scalar';
 our $complainmethod = 'die';
 
@@ -16,12 +16,13 @@ sub complain { $complainmethod eq 'die' ? die $_[0] : warn $_[0] }
 sub TIESCALAR {
     my ($self, $widget, $store, $fetch) = @_;
 
-    if (substr(ref $widget, 0, 4) ne 'Wx::') {complain("$widget is no Wx object")}
-    elsif (not $widget->isa('Wx::Control'))  {complain("$widget is no Wx widget")}
-    elsif (not $widget->can('GetValue'))     {complain("$widget has no method: GetValue")}
-    elsif (not $widget->can('SetValue'))      {complain("$widget has no method: SetValue")}
-    elsif (defined $store and ref $store ne 'CODE') {complain("no coderef as STORE callback")}
-    elsif (defined $fetch and ref $fetch ne 'CODE') {complain("no coderef as FETCH callback")}
+    if    (not ref $widget)                        {complain("$widget isn't even a referece, has to a Wx object")}
+    elsif (index($widget, '=') == -1)              {complain("$widget isn't even an object, has to a Wx object")}
+    elsif (not $widget->isa('Wx::Control'))        {complain("$widget is no Wx widget")}
+    elsif (not $widget->can('GetValue'))           {complain("$widget has no method: GetValue")}
+    elsif (not $widget->can('SetValue'))           {complain("$widget has no method: SetValue")}
+    elsif (defined $store and ref $store ne 'CODE'){complain("no coderef as STORE callback")}
+    elsif (defined $fetch and ref $fetch ne 'CODE'){complain("no coderef as FETCH callback")}
     else {
         my %hash = ('w' => $widget, 'widget' => $widget);
         $hash{'store'} = $store if defined $store;
@@ -39,6 +40,7 @@ sub STORE {
     if (exists $_[0]->{'store'}) { &{$_[0]->{'store'}}( $_[0]->{'w'}, $_[1] ) }
     else                         { return $_[0]->{'w'}->SetValue( $_[1] )     }
 }
+sub UNTIE {} # to prevent crashes if called
 sub DESTROY {} # to prevent crashes if called
 
 'one';

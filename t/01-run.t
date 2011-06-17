@@ -6,7 +6,7 @@ BEGIN { unshift @INC, -d 't' ? 'lib' : '../lib' } # making local lib favoured
 package TestApp;
 our @ISA = 'Wx::App';
 
-use Test::More tests => 33;
+use Test::More tests => 37;
 use Test::Exception;
 use Test::Warn;
 
@@ -27,22 +27,26 @@ sub OnInit {
 
 	# die when input is not correct
 	dies_ok   { tie my $tb, $module, '' } 'dies when tying an empty value';
-	throws_ok { tie my $tb, $module, '' } qr/is no Wx object/, $cmsg;
-	dies_ok   { tie my $tb, $module,  1 } 'dies when tying a none ref';
-	throws_ok { tie my $tb, $module,  1 } qr/is no Wx object/, $cmsg;
+	throws_ok { tie my $tb, $module, '' } qr/ isn't even a referece,/, $cmsg;
+	dies_ok   { tie my $tb, $module,  2 } 'dies when tying a simple value';
+	throws_ok { tie my $tb, $module,  2 } qr/ isn't even a referece,/, $cmsg;
+	dies_ok   { tie my $tb, $module, {} } 'dies when tying a hashref';
+	throws_ok { tie my $tb, $module, {} } qr/ isn't even an object,/, $cmsg;
 	dies_ok   { tie my $tb, $module, $s } 'dies when tying a wx object thats not a widget';
-	throws_ok { tie my $tb, $module, $s } qr/is no Wx widget/, $cmsg;
+	throws_ok { tie my $tb, $module, $s } qr/ is no Wx widget/, $cmsg;
 	dies_ok   { tie my $tb, $module, $b } 'dies when tying widgets without getter or setter';
-	throws_ok { tie my $tb, $module, $b } qr/has no method:/,  $cmsg;
-	dies_ok   { tie my $tb, $module, $t, {} } 'dies when tying with bad STORE callback';
+	throws_ok { tie my $tb, $module, $b } qr/ has no method:/,  $cmsg;
+	dies_ok   { tie my $tb, $module, $t, {} } 'dies when tying with STORE callback thats not a coderef';
 	throws_ok { tie my $tb, $module, $t, {} } qr/no coderef as STORE callback/,  $cmsg;
-	dies_ok   { tie my $tb, $module, $t, sub {}, {} } 'dies when tying with bad FETCH callback';
+	dies_ok   { tie my $tb, $module, $t, sub {}, {} } 'dies when tying with FETCH callback thats not a coderef';
 	throws_ok { tie my $tb, $module, $t, sub {}, {} } qr/no coderef as FETCH callback/,  $cmsg;
+
+	lives_ok  { tie my $tb, $module, MySlider->new($frame) } 'can handle derived widgets';
 
 	# switch die and warn mode
 	my $tbb;
 	Tie::Wx::Widget::warn_mode();
-	warning_like {tie my $tbb, $module, ''} qr/is no Wx object/, 'warn mode works correctly';
+	warning_like {tie $tbb, $module, ''} qr/ isn't even a referece,/, 'warn mode works correctly';
 	is (tied $tbb, undef, 'really didn\'t tie in warn mode with bad input');
 	Tie::Wx::Widget::die_mode();
 	dies_ok { tie my $tb, $module, '' } 'die mode works too';
@@ -75,13 +79,14 @@ sub OnInit {
 	is ($tref->FETCH, $old_txt, 'FETCH as a method works');
 	$tref->STORE($new_txt);
 	is ($tt, $new_txt, 'STORE as a method works');
-	my $tref = tie( $tt, $module, $t, sub {$new_txt}, sub {$old_txt});
+	$tref = tie( $tt, $module, $t, sub {$new_txt}, sub {$old_txt});
 	is ($tref->FETCH, $old_txt, 'FETCH callback as a method works');
 	is ($tref->STORE, $new_txt, 'STORE callback as a method works');
 	is ($tref->{'widget'}, $t, 'get the internal Wx widget object');
 	is ($tref->{'w'}, $t, 'alternative shortcut key works too');
 	is (&{$tref->{'fetch'}}(), $old_txt, 'get the FETCH callback');
 	is (&{$tref->{'store'}}(), $new_txt, 'get the STORE callback');
+	lives_ok { $tref->UNTIE } 'UNTIE can be called'; # but has no effect
 	lives_ok { $tref->DESTROY } 'DESTROY can be called'; # but has no effect
 
 	# shut the app down after 10 millseconds
@@ -90,6 +95,10 @@ sub OnInit {
 
 	1;
 }
+
+package MySlider;
+our @ISA = 'Wx::Slider';
+sub new { $_[0]->SUPER::new( $_[1], -1, 2, 1, 3 ) }
 
 package main;
 TestApp->new->MainLoop;
