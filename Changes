@@ -1,9 +1,12 @@
 Revision history for Tie-Wx-Widget
 
+1.0     3. december
+        doc fixes  
+
 0.991   17.july
-        accepting als own widget classes inherited from Wx::Control 
+        accepting also selfderived widget classes
         dummy UNTIE method
-        more exact error messages when attempt to tie all sorts of things
+        more precise error messages when attempt to tie all sorts of things
 
 0.99    11.july
         changing internal API, own callback now replace the default ones completely
@@ -17,7 +20,7 @@ Revision history for Tie-Wx-Widget
         added warn_mode mode so program hasn't to die,
         when not trying to tie a none widget
 
-0.8      5.july
+0.8     5.july
         alternative shortcut key for the widgetref ('w')
         test for that
         typos in the doc

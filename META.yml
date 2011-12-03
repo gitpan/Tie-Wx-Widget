@@ -1,7 +1,7 @@
 ---
 # http://module-build.sourceforge.net/META-spec.html
 name:         Tie-Wx-Widget
-version:      0.991
+version:      1.0
 abstract:     get and set main value of a Wx widget with less syntax and more magic
 installdirs:  site
 distribution_type: module
